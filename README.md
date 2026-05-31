@@ -103,7 +103,7 @@ AA-Crew-Absence-Prediction-Reserve-Optimization/
 ├── outputs/
 │   └── (all 14 project charts saved here as PNG)
 ├── docs/
-│   └── AA_Crew_Absence_Prediction_Documentation.docx
+│   └── AA_Crew_Absence_Prediction_Documentation.pdf
 ├── README.md
 ├── requirements.txt
 └── .gitignore
