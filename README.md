@@ -14,13 +14,13 @@ This project replicates the analytical workflow of American Airlines' **Crew Str
 
 ## Original Contributions
 
-This project extends published research in three ways no academic paper has achieved:
+This project extends published research in three ways that no academic paper has achieved:
 
 **1. Schedule Stress Score (SSS)**
-A novel composite feature engineered from 820,876 real BTS flight records. It combines night departure concentration, long-haul flight percentage, late cascade delays, and early morning departures into one hub-day stress metric scored on a 0 to 100 scale. The SSS ranked **#4 of 35 features by SHAP importance**, confirming that aviation schedule patterns predict crew absence beyond what demographic features alone can explain.
+A novel composite feature engineered from 820,876 real BTS flight records. It combines night-departure concentration, long-haul flight percentage, late-cascade delays, and early-morning departures into a single hub-day stress metric, scored on a 0 to 100 scale. The SSS ranked **#4 of 35 features by SHAP importance**, confirming that aviation schedule patterns predict crew absence beyond what demographic features alone can explain.
 
 **2. Hub-Level Aggregation**
-Individual absence predictions are aggregated to hub-day operational level, matching exactly how AA's Crew Scheduling team manages reserve pools in practice. No published research paper performs this aggregation step.
+Individual absence predictions are aggregated to the hub-day operational level, matching exactly how AA's Crew Scheduling team manages reserve pools in practice. No published research paper performs this aggregation step.
 
 **3. Asymmetric Cost Optimization**
 A two-sided cost function translates absence probability into specific reserve staffing recommendations with a dollar output. The classification threshold was lowered from 0.50 to 0.35 based on cost asymmetry: missing a real absence costs $40,000 in a flight cancellation, while a false alarm costs $500 for one idle reserve crew day.
@@ -80,7 +80,7 @@ python notebooks/04_modeling.py
 python notebooks/05_cost_optimization.py
 ```
 
-Each script picks up exactly where the previous one left off using saved parquet files. All charts are written to the `outputs/` folder automatically.
+Each script picks up exactly where the previous one left off using saved parquet files. All charts are automatically written to the `outputs/` folder.
 
 ---
 
@@ -102,8 +102,6 @@ AA-Crew-Absence-Prediction-Reserve-Optimization/
 │   └── 05_cost_optimization.py
 ├── outputs/
 │   └── (all 14 project charts saved here as PNG)
-├── docs/
-│   └── AA_Crew_Absence_Prediction_Documentation.pdf
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -113,7 +111,7 @@ AA-Crew-Absence-Prediction-Reserve-Optimization/
 
 ## Schedule Stress Score: How It Works
 
-The SSS is built from four BTS-derived signals per hub per day. Weights come from effect sizes reported in the Springer 2024 paper on pilot absenteeism at a Dutch low-cost airline.
+The SSS is built from four BTS-derived signals per hub per day. Weights are based on the effect sizes reported in the Springer 2024 paper on pilot absenteeism at a Dutch low-cost airline.
 
 | Signal | Weight | What it captures |
 |---|---|---|
@@ -122,7 +120,7 @@ The SSS is built from four BTS-derived signals per hub per day. Weights come fro
 | Late cascade percentage | 0.20 | Delays of 30+ minutes after 17:00 (rotation penalty) |
 | Early departure percentage | 0.15 | Departures between 04:00 and 06:00 (recovery deficit) |
 
-The raw score is normalised to a 0 to 100 scale. Days scoring above 75 are classified as Critical and trigger the high-risk reserve recommendation in the cost optimization layer.
+The raw score is normalized to a 0-100 scale. Days scoring above 75 are classified as Critical and trigger the high-risk reserve recommendation in the cost optimization layer.
 
 ---
 
@@ -154,10 +152,10 @@ All regularisation settings were chosen conservatively for the 592-row training 
 
 Every serious project documents its constraints honestly.
 
-- **Dataset domain gap.** The UCI data is from a Brazilian courier company, not airline crew. It lacks aviation-specific duty time and block hour data. The SSS partially bridges this gap by bringing real aviation schedule signals into the feature set.
+- **Dataset domain gap.** The UCI data is from a Brazilian courier company, not airline crew. It lacks aviation-specific duty-time and block-hour data. The SSS partially bridges this gap by bringing real aviation schedule signals into the feature set.
 - **Small training set.** 592 training rows after the 80/20 split. RF and XGBoost show moderate overfitting (train-validation gap 0.10 to 0.12), controlled by conservative regularisation and 5-fold CV.
-- **SSS merge approximation.** SSS is joined by day-of-week and month because the UCI dataset lacks actual flight dates per employee. With real crew schedule data linked to individual IDs, SSS would likely rank higher.
-- **Southern Hemisphere seasonality.** The UCI data is from Brazil where summer is December and January. Summer shows higher absence than winter in the data. This is an honest finding, not an error.
+- **SSS merge approximation.** SSS is joined on day-of-week and month because the UCI dataset lacks actual flight dates for each employee. With real crew schedule data linked to individual IDs, SSS would likely rank higher.
+- **Southern Hemisphere seasonality.** The UCI data is from Brazil, where summer is December and January. The data show higher absence in summer than in winter. This is an honest finding, not an error.
 - **Cost estimate uncertainty.** The $1.3M figure uses industry benchmarks of $40,000 per cancellation and $500 per reserve crew day. Replace these constants in `05_cost_optimization.py` with real AA P&L data for a production estimate.
 
 ---
@@ -174,7 +172,7 @@ Every serious project documents its constraints honestly.
 
 ## Resume Bullet
 
-*"Built end-to-end crew absence prediction system replicating American Airlines' Crew Strategy & Intelligence workflow; trained Logistic Regression, Random Forest, and XGBoost on 820,876 real BTS flights and 740 UCI absence records; XGBoost achieved AUC 0.87 and Recall 0.91 at business-optimized threshold 0.35 (5-fold CV AUC 0.86 ± 0.03); engineered Schedule Stress Score from BTS schedule data, ranked #4 of 35 features by SHAP; reserve optimization layer estimated $1.3M annual net benefit across DFW and CLT."*
+*Built end-to-end crew absence prediction system replicating American Airlines' Crew Strategy & Intelligence workflow; trained Logistic Regression, Random Forest, and XGBoost on 820,876 real BTS flights and 740 UCI absence records; XGBoost achieved AUC 0.87 and Recall 0.91 at business-optimized threshold 0.35 (5-fold CV AUC 0.86 ± 0.03); engineered Schedule Stress Score from BTS schedule data, ranked #4 of 35 features by SHAP; reserve optimization layer estimated $1.3M annual net benefit across DFW and CLT.*
 
 ---
 
